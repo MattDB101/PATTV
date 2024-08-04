@@ -20,7 +20,6 @@ def execute_query(query, params=()):
         if conn:
             conn.close()
         print("")
-           
 
 def create_table():
     print("Creating Table...")
@@ -32,7 +31,6 @@ def create_table():
         Banned INT NOT NULL DEFAULT 0
     ); '''
     execute_query(query)
-    
 
 def get_acc():
     print("Getting unbanned account...")
@@ -44,7 +42,7 @@ def get_acc():
         return row[0]
     else:
         print("Unable to get an unbanned user!")
-        quit()
+        raise Exception("No unbanned accounts available.")
         
 def get_streamkey(username):
     print("Getting Stream key...")
@@ -54,14 +52,13 @@ def get_streamkey(username):
         print(f"Streamkey found: {row[0]} \n")
         return row[0]
     else:
-        print("Unable to get streamkey for user {username}!")
-        quit()
+        print(f"Unable to get streamkey for user {username}!")
+        raise Exception(f"Streamkey not found for user {username}.")
         
 def add_account(username, password, streamkey):
     print("Adding account...")
     query = '''INSERT INTO accounts (Username, Password, Stream_key) VALUES (?, ?, ?)'''
     execute_query(query, (username, password, streamkey))
-    
 
 def set_banned(username):
     print("Setting account banned...")

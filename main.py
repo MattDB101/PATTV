@@ -1,29 +1,30 @@
 import asyncio
-import check_ban
+import ban_checker
 import db
-import discord_bot  # Import the bot module
+import discord_bot
+from shared_state import application_state
 
-global username
-username = ""
-db.create_table()
-
-async def start():
-    global username
-    if username == "":
-        username = db.get_acc()
-
+async def check_ban():
+    await asyncio.sleep(10)   
+    
     while True:
-        if check_ban.check_user(username):
+        username = await application_state.get_username()
+        if ban_checker.check_user(username):
             db.set_banned(username)
-            username = db.get_acc()
-
+            banned_account = username
+            new_account = db.get_acc()
+            await application_state.set_username(new_account)
+            await discord_bot.alert_ban(banned_account, new_account)
+        
         print("sleeping...")
-        await asyncio.sleep(100)  # change to 3600 for 1hr
+        await asyncio.sleep(30)  # change to 3600 for 1hr    
 
 async def main():
+    if await application_state.get_username() == "":
+        await application_state.set_username(db.get_acc())
     bot_task = asyncio.create_task(discord_bot.start_bot())
-    main_task = asyncio.create_task(start())
-    await asyncio.gather(bot_task, main_task)
+    ban_task = asyncio.create_task(check_ban())
+    await asyncio.gather(bot_task, ban_task)
 
 if __name__ == "__main__":
     asyncio.run(main())

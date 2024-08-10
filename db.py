@@ -2,6 +2,7 @@ import sqlite3
 
 DB_NAME = 'PTTV.db'
 
+
 def execute_query(query, params=()):
     try:
         conn = sqlite3.connect(DB_NAME)
@@ -21,6 +22,7 @@ def execute_query(query, params=()):
             conn.close()
         print("")
 
+
 def create_table():
     print("Creating Table...")
     query = '''
@@ -32,33 +34,27 @@ def create_table():
     ); '''
     execute_query(query)
 
+
 def get_acc():
     print("Getting unbanned account...")
-    query = '''SELECT Username FROM accounts WHERE Banned = 0'''
+    query = '''SELECT Username, Stream_Key FROM accounts WHERE Banned = 0'''
     row = execute_query(query)
 
     if row is not None:
-        print(f"New account chosen: {row[0]} \n")
-        return row[0]
+        username = row[0]
+        streamkey = row[1]
+        print(f"New account chosen: {username} {streamkey}\n")
+        return username, streamkey
     else:
         print("Unable to get an unbanned user!")
         raise Exception("No unbanned accounts available.")
         
-def get_streamkey(username):
-    print("Getting Stream key...")
-    query = '''SELECT Stream_key FROM accounts WHERE username = ?'''
-    row = execute_query(query, (username, ))
-    if row is not None:
-        print(f"Streamkey found: {row[0]} \n")
-        return row[0]
-    else:
-        print(f"Unable to get streamkey for user {username}!")
-        raise Exception(f"Streamkey not found for user {username}.")
-        
+                
 def add_account(username, password, streamkey):
     print("Adding account...")
     query = '''INSERT INTO accounts (Username, Password, Stream_key) VALUES (?, ?, ?)'''
     execute_query(query, (username, password, streamkey))
+
 
 def set_banned(username):
     print("Setting account banned...")

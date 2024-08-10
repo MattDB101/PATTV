@@ -1,10 +1,8 @@
-import db
-from shared_state import application_state
 import os
-from dotenv import load_dotenv
 import discord
+from dotenv import load_dotenv
 from discord.ext import commands
-
+from shared_state import application_state
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -35,8 +33,8 @@ async def on_ready():
 async def getkey(interaction):
     try:
         username = await application_state.get_username()  
-        print(f"current user: {username}")
-        streamkey = db.get_streamkey(username)
+        streamkey = await application_state.get_streamkey()
+        print(f"current user: {username} {streamkey}")
         await interaction.response.send_message(f'Here is your stream key: {streamkey}')
     except Exception as e:
         await interaction.response.send_message(f'Error: {e}')

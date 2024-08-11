@@ -23,6 +23,16 @@ async def alert_ban(bannedUser, newUser):
         print(e)
 
 
+async def alert_live(username):
+    try:
+        channel = bot.get_channel(1266790214974705769)
+        response = f"Someone just went live!\nhttps://www.twitch.tv/{username}"
+        await channel.send(response)
+    
+    except Exception as e:
+        print(e)
+
+
 @bot.event
 async def on_ready():
     await bot.tree.sync()

@@ -19,11 +19,11 @@ def check_user(username):
             print(f'\n{username} has been banned!\n')
             return True
         else:
-            print(f'\n{username} is not yet banned.\n')
+            #print(f'\n{username} is not yet banned.\n')
             return False
         
     except NoSuchElementException: 
-            print(f'\n{username} is not yet banned.\n')
+            #print(f'\n{username} is not yet banned.\n')
             return False
         
     finally:

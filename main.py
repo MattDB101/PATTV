@@ -22,7 +22,7 @@ async def check_ban():
                 await application_state.set_user(new_account, new_streamkey)
                 await discord_bot.alert_ban(banned_account, new_account)
             
-            print("sleeping...")
+            print("sleeping ban check...")
             await asyncio.sleep(3600) # change to 3600 for 1hr    
     except Exception as e:
         print(f"Unexpected error in check_ban: {e}")
@@ -33,17 +33,19 @@ async def check_live():
     try:
         while True:
             username = await application_state.get_username()
-            live = await application_state.get_live()
-            if live_checker.check_user(username) and not(live):
+            was_live = await application_state.get_live()
+            is_live = live_checker.check_user(username) 
+            
+            if not is_live:
+                await application_state.set_live(False)
+            
+            if is_live and not(was_live):
                 await application_state.set_live(True)
                 print(f"{username} just went live!")
                 await discord_bot.alert_live(username)
-            
-            if not live_checker.check_user(username):
-                await application_state.set_live(False)
-            
-            print("sleeping...")
-            await asyncio.sleep(60)  
+                            
+            print("sleeping live check...")
+            await asyncio.sleep(600)  
     except Exception as e:
         print(f"Unexpected error in check_live: {e}")
 
